@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOODO | Vibrant Gourmet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --vibrant-orange: #FF5F00;
+            --vibrant-pink: #FF007A;
+            --vibrant-yellow: #FFD600;
+            --vibrant-purple: #8B5CF6;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .syne { font-family: 'Syne', sans-serif; }
+
+        .marquee {
+            white-space: nowrap;
+            overflow: hidden;
+            display: flex;
+            background: var(--vibrant-yellow);
+            padding: 15px 0;
+            border-top: 4px solid #000;
+            border-bottom: 4px solid #000;
+        }
+
+        .marquee-content {
+            display: flex;
+            animation: marquee 30s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .float-3d { animation: float3d 6s ease-in-out infinite; }
+        @keyframes float3d {
+            0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+            50% { transform: translateY(-30px) rotate(5deg) scale(1.05); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #FF5F00, #FF007A, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .grid-bg {
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+
+        .glass-nav {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active { display: flex; }
+
+        .category-pill.active {
+            background: var(--vibrant-orange);
+            color: white;
+            border-color: var(--vibrant-orange);
+        }
+    </style>
+</head>
+<body class="grid-bg">
+
+    <!-- Navbar -->
+    <nav class="glass-nav fixed top-0 w-full z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+                <div class="bg-orange-600 p-2 rounded-lg transform rotate-12">
+                    <i data-lucide="zap" class="text-white w-6 h-6 fill-current"></i>
+                </div>
+                <span class="text-2xl font-black tracking-tighter italic">FOODO<span class="text-orange-600">!</span></span>
+            </div>
+            <div class="hidden md:flex items-center gap-10 font-bold uppercase text-xs tracking-widest">
+                <a href="#menu-section" class="hover:text-orange-500 transition-colors">The Menu</a>
+                <button onclick="toggleModal('popular-modal')" class="hover:text-pink-500 transition-colors uppercase">Popular</button>
+                <button onclick="toggleModal('offers-modal')" class="hover:text-yellow-500 transition-colors uppercase">Offers</button>
+                <a href="logout.html" class="bg-white text-black px-6 py-2 rounded-full hover:bg-orange-500 hover:text-white transition-all">Log Out</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-orange-600/20 blur-[120px] rounded-full"></div>
+        <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <h1 class="text-7xl md:text-[10rem] font-black leading-[0.85] tracking-tighter mb-8">
+                    CRAVE <br><span class="text-gradient">BETTER.</span>
+                </h1>
+                <p class="text-xl text-slate-400 max-w-md mb-10 leading-relaxed font-medium">
+                    Explore our curated signature vegetarian menu. Urban eats, reimagined.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#menu-section" class="bg-orange-600 text-white px-10 py-5 rounded-full font-black text-lg hover:scale-105 transition-all shadow-2xl shadow-orange-600/40">
+                        SEE OUR MENU
+                    </a>
+                </div>
+            </div>
+            <div class="relative flex justify-center lg:justify-end">
+                <div class="float-3d relative">
+                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800" 
+                         class="w-[350px] md:w-[450px] rounded-[4rem] border-8 border-white/10 shadow-2xl" alt="Hero">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Moving Marquee -->
+    <div class="marquee">
+        <div class="marquee-content text-black font-black text-6xl uppercase tracking-tighter">
+            &nbsp;• PREMIUM VEG DELIGHTS • FASTEST IN THE CITY • BOLD FLAVORS • CRAFTED WITH LOVE • PREMIUM VEG DELIGHTS • FASTEST IN THE CITY • BOLD FLAVORS • CRAFTED WITH LOVE
+        </div>
+    </div>
+
+    <!-- Menu Section -->
+    <section id="menu-section" class="py-32 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20 reveal">
+                <h2 class="text-6xl md:text-8xl font-black tracking-tighter italic mb-10">THE <span class="text-orange-600">MENU</span></h2>
+                
+                <!-- Category Switcher -->
+                <div class="flex flex-wrap justify-center gap-4 mb-16">
+                    <button onclick="filterMenu('all')" class="category-pill active border-2 border-white/20 px-8 py-3 rounded-full font-black uppercase tracking-widest text-xs transition-all">All Items</button>
+                    <button onclick="filterMenu('starter')" class="category-pill border-2 border-white/20 px-8 py-3 rounded-full font-black uppercase tracking-widest text-xs transition-all">Starters</button>
+                    <button onclick="filterMenu('main')" class="category-pill border-2 border-white/20 px-8 py-3 rounded-full font-black uppercase tracking-widest text-xs transition-all">Main Course</button>
+                </div>
+            </div>
+
+            <div id="grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <!-- Items injected here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Modals -->
+    <div id="offers-modal" class="modal" onclick="if(event.target == this) toggleModal('offers-modal')">
+        <div class="bg-zinc-900 border-4 border-yellow-400 p-10 rounded-[3rem] max-w-lg w-full relative">
+            <button onclick="toggleModal('offers-modal')" class="absolute top-6 right-6 text-white/50 hover:text-white"><i data-lucide="x"></i></button>
+            <h2 class="text-5xl font-black italic tracking-tighter text-yellow-400 mb-8">HOT DEALS!</h2>
+            <div class="space-y-6">
+                <div class="p-6 bg-white/5 rounded-2xl border-l-8 border-orange-600">
+                    <p class="text-xs font-black text-orange-600 uppercase mb-1">Code: BOLD50</p>
+                    <p class="text-xl font-bold">50% OFF on first 3 orders</p>
+                </div>
+                <div class="p-6 bg-white/5 rounded-2xl border-l-8 border-pink-600">
+                    <p class="text-xs font-black text-pink-600 uppercase mb-1">Code: VEGLOVE</p>
+                    <p class="text-xl font-bold">Free Starter on bills above ₹999</p>
+                </div>
+                <div class="p-6 bg-white/5 rounded-2xl border-l-8 border-purple-600">
+                    <p class="text-xs font-black text-purple-600 uppercase mb-1">Weekend Special</p>
+                    <p class="text-xl font-bold">Buy 1 Main Course, Get 1 Dessert Free</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="popular-modal" class="modal" onclick="if(event.target == this) toggleModal('popular-modal')">
+        <div class="bg-zinc-950 border-4 border-pink-600 p-0 rounded-[4rem] max-w-4xl w-full overflow-hidden flex flex-col md:flex-row relative">
+            <button onclick="toggleModal('popular-modal')" class="absolute top-6 right-6 z-20 text-white bg-black/50 p-2 rounded-full"><i data-lucide="x"></i></button>
+            <div class="w-full md:w-1/2 h-80 md:h-auto">
+                <img src="https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
+            </div>
+            <div class="w-full md:w-1/2 p-12 flex flex-col justify-center">
+                <span class="text-pink-600 font-black uppercase tracking-widest text-xs mb-4">Dish of the Month</span>
+                <h2 class="text-5xl font-black italic tracking-tighter mb-6">TRUFFLE <br>PANEER ROAST</h2>
+                <p class="text-slate-400 mb-8 font-medium">Artisanal paneer cubes marinated in 24-hour secret spice mix, finished with white truffle oil and edible gold flakes.</p>
+                <div class="text-4xl font-black mb-10">₹1,250</div>
+                <button onclick="addToCartDirectly({name: 'TRUFFLE PANEER', price: 1250, img: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80&w=800'})" class="bg-pink-600 py-5 rounded-full font-black uppercase text-sm tracking-widest hover:scale-105 transition-all">Add to Bag +</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating UI Widgets -->
+    <div class="fixed bottom-10 right-10 z-[100] group">
+        <a href="cart.html" id="cart-main" class="bg-yellow-400 text-black w-20 h-20 rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-all duration-500 ring-8 ring-yellow-400/20">
+            <i data-lucide="shopping-bag" class="w-8 h-8"></i>
+            <span id="cart-count" class="absolute -top-2 -right-2 bg-orange-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-black text-sm">0</span>
+        </a>
+    </div>
+
+    <script>
+        // Menu Items
+        const allFoodItems = [
+            // Starters
+            { id: 1, type: 'starter', name: "PANEER TIKKA", price: 420, img: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=500", color: "#FF5F00" },
+            { id: 2, type: 'starter', name: "HARA BHARA KABAB", price: 320, img: "https://images.unsplash.com/photo-1626777553732-48062d1c5c5c?w=500", color: "#10B981" },
+            { id: 3, type: 'starter', name: "SAMOSA CHAAT", price: 180, img: "https://images.unsplash.com/photo-1601050690597-df056fb1d99a?w=500", color: "#F43F5E" },
+            { id: 4, type: 'starter', name: "VEG SPRING ROLL", price: 280, img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500", color: "#FFD600" },
+            { id: 5, type: 'starter', name: "CHILLI PANEER", price: 390, img: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500", color: "#FF007A" },
+            { id: 6, type: 'starter', name: "CRISPY CORN", price: 250, img: "https://images.unsplash.com/photo-1516684732162-798a0062be99?w=500", color: "#8B5CF6" },
+            { id: 7, type: 'starter', name: "MUSHROOM DUPLEX", price: 450, img: "https://images.unsplash.com/photo-1508487972746-ae116ad1039c?w=500", color: "#FF5F00" },
+            { id: 8, type: 'starter', name: "DAHI VADA", price: 220, img: "https://images.unsplash.com/photo-1626074353765-517a681e40be?w=500", color: "#10B981" },
+            { id: 9, type: 'starter', name: "VEG MANCHURIAN", price: 340, img: "https://images.unsplash.com/photo-1512058560366-cd24270083cd?w=500", color: "#FFD600" },
+            { id: 10, type: 'starter', name: "ALOO TIKKI", price: 150, img: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=500", color: "#F43F5E" },
+            // Main Course Additions
+            { id: 11, type: 'main', name: "BUTTER PANEER", price: 480, img: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500", color: "#FF5F00" },
+            { id: 12, type: 'main', name: "DAL MAKHANI", price: 380, img: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500", color: "#8B5CF6" }
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('foodoCart')) || [];
+
+        function init() {
+            lucide.createIcons();
+            updateCartCount();
+            renderItems(allFoodItems);
+            handleReveal();
+            window.addEventListener('scroll', handleReveal);
+        }
+
+        function renderItems(items) {
+            const container = document.getElementById('grid-container');
+            container.innerHTML = '';
+            
+            items.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = "reveal group relative bg-zinc-900 rounded-[3rem] p-6 border border-white/5 hover:border-white/20 transition-all duration-500 overflow-hidden active";
+                card.innerHTML = `
+                    <div class="relative h-64 w-full rounded-[2.5rem] overflow-hidden mb-8">
+                        <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute bottom-4 left-4 font-black text-2xl italic tracking-tighter bg-black/50 px-4 py-1 rounded-xl">₹${item.price}</div>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-3xl font-black italic tracking-tighter">${item.name}</h3>
+                            <span class="text-[10px] font-black px-2 py-1 rounded bg-white/10 text-white/50 uppercase tracking-widest">${item.type}</span>
+                        </div>
+                        <p class="text-slate-500 text-sm font-bold mb-6">Urban classic made with artisanal methods.</p>
+                        <button onclick="addToCart(event, ${item.id})" class="w-full py-4 rounded-2xl bg-white text-black font-black hover:bg-orange-600 hover:text-white transition-all transform active:scale-95 uppercase tracking-widest text-[10px]">
+                            Add to Bag +
+                        </button>
+                    </div>
+                    <div class="absolute -bottom-10 -right-10 w-32 h-32 rounded-full blur-3xl opacity-10" style="background: ${item.color}"></div>
+                `;
+                container.appendChild(card);
+            });
+            setTimeout(handleReveal, 50);
+        }
+
+        function filterMenu(type) {
+            document.querySelectorAll('.category-pill').forEach(btn => btn.classList.remove('active'));
+            if(event) event.target.classList.add('active');
+
+            if (type === 'all') {
+                renderItems(allFoodItems);
+            } else {
+                const filtered = allFoodItems.filter(item => item.type === type);
+                renderItems(filtered);
+            }
+        }
+
+        function addToCart(event, id) {
+            const item = allFoodItems.find(i => i.id === id);
+            cart.push(item);
+            saveCart();
+            
+            const btn = event.target;
+            const oldText = btn.innerText;
+            btn.innerText = "ADDED! 🔥";
+            setTimeout(() => btn.innerText = oldText, 800);
+        }
+
+        function addToCartDirectly(item) {
+            cart.push({...item, id: Date.now()});
+            saveCart();
+            toggleModal('popular-modal');
+        }
+
+        function saveCart() {
+            localStorage.setItem('foodoCart', JSON.stringify(cart));
+            updateCartCount();
+        }
+
+        function updateCartCount() {
+            document.getElementById('cart-count').innerText = cart.length;
+        }
+
+        function toggleModal(id) {
+            document.getElementById(id).classList.toggle('active');
+            document.body.style.overflow = document.getElementById(id).classList.contains('active') ? 'hidden' : 'auto';
+        }
+
+        function handleReveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 50) el.classList.add('active');
+            });
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

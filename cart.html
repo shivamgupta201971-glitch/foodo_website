@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foodo | Your Bag</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+        }
+        .timer-bar {
+            animation: shrink 10s linear forwards;
+        }
+        @keyframes shrink {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+        .modal-overlay {
+            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.6);
+        }
+        .discount-pulse {
+            animation: pulse-green 2s infinite;
+        }
+        @keyframes pulse-green {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-20">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-6 h-20 flex justify-between items-center">
+            <a href="home.html" class="flex items-center gap-2">
+                <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                <span class="font-bold text-sm uppercase tracking-widest text-gray-500">Back to Menu</span>
+            </a>
+            <h1 class="text-xl font-black italic tracking-tighter text-orange-600 uppercase">Your Bag</h1>
+            <div class="w-10"></div> 
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 mt-12">
+        <div class="grid lg:grid-cols-3 gap-12">
+            
+            <!-- Items Column -->
+            <div class="lg:col-span-2 space-y-6">
+                <div id="cart-items-container" class="space-y-4">
+                    <!-- Items injected by JS -->
+                </div>
+                
+                <div id="empty-cart" class="hidden text-center py-20 bg-white rounded-[2rem] border-2 border-dashed border-gray-200">
+                    <div class="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="shopping-bag" class="text-gray-400"></i>
+                    </div>
+                    <h3 class="text-lg font-bold">Your bag is empty</h3>
+                    <p class="text-gray-500 mb-6">Add some delicious items to get started!</p>
+                    <a href="home.html" class="inline-block bg-orange-600 text-white px-8 py-3 rounded-full font-bold">Go to Menu</a>
+                </div>
+            </div>
+
+            <!-- Summary Column -->
+            <div class="lg:col-span-1">
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 sticky top-32">
+                    <h2 class="text-xl font-black mb-6">Order Summary</h2>
+                    <div class="space-y-4 mb-8">
+                        <div class="flex justify-between text-gray-500 font-medium">
+                            <span>Subtotal</span>
+                            <span id="subtotal">₹0</span>
+                        </div>
+                        
+                        <!-- Random Discount Applied -->
+                        <div id="discount-row" class="flex justify-between text-green-600 font-bold bg-green-50 px-3 py-2 rounded-xl hidden">
+                            <span id="discount-label">Lucky Discount (0%)</span>
+                            <span id="discount-amount">-₹0</span>
+                        </div>
+
+                        <div class="flex justify-between text-gray-500 font-medium">
+                            <span>Delivery Fee</span>
+                            <span>₹40</span>
+                        </div>
+                        <div class="flex justify-between text-gray-500 font-medium">
+                            <span>Tax (GST 5%)</span>
+                            <span id="tax">₹0</span>
+                        </div>
+                        <hr class="border-gray-100">
+                        <div class="flex justify-between text-2xl font-black">
+                            <span>Total</span>
+                            <span id="final-total">₹0</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="startPaymentFlow()" id="checkout-btn" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-orange-600 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none">
+                        Proceed to Payment
+                    </button>
+
+                    <div id="lucky-badge" class="mt-4 hidden text-center">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-black uppercase tracking-tighter discount-pulse">
+                            <i data-lucide="sparkles" class="w-3 h-3"></i>
+                            Random Discount Applied!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Processing Modal -->
+    <div id="payment-modal" class="fixed inset-0 z-[100] modal-overlay hidden flex items-center justify-center p-6">
+        <div class="bg-white w-full max-w-md rounded-[3rem] p-10 text-center shadow-2xl overflow-hidden relative">
+            <div class="w-20 h-20 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i data-lucide="shield-check" class="w-10 h-10"></i>
+            </div>
+            <h2 class="text-3xl font-black mb-2 italic">Linking Gateway</h2>
+            <p class="text-gray-500 mb-8 font-medium">Preparing secure environment for ₹<span id="modal-total">0</span></p>
+            
+            <!-- Animated Timer Bar -->
+            <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden mb-4">
+                <div id="timer-bar" class="h-full bg-orange-600"></div>
+            </div>
+            
+            <p class="text-xs font-black uppercase tracking-widest text-orange-600">
+                Redirecting in <span id="countdown-text">10</span>s
+            </p>
+            
+            <div class="mt-8 flex justify-center gap-4 opacity-40">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" class="h-4" alt="Paypal">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" class="h-4" alt="Visa">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" class="h-4" alt="Mastercard">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('foodoCart')) || [];
+        let currentTotal = 0;
+
+        function init() {
+            lucide.createIcons();
+            renderCart();
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            const emptyState = document.getElementById('empty-cart');
+            const checkoutBtn = document.getElementById('checkout-btn');
+            
+            if (cart.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                checkoutBtn.disabled = true;
+                updateSummary(0);
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            checkoutBtn.disabled = false;
+            container.innerHTML = '';
+
+            const groupedCart = cart.reduce((acc, item) => {
+                const found = acc.find(i => i.id === item.id);
+                if (found) { found.qty += 1; }
+                else { acc.push({ ...item, qty: 1 }); }
+                return acc;
+            }, []);
+
+            let subtotal = 0;
+
+            groupedCart.forEach(item => {
+                subtotal += (item.price * item.qty);
+                const div = document.createElement('div');
+                div.className = "bg-white p-5 rounded-[2rem] border border-gray-100 flex items-center gap-6 shadow-sm";
+                div.innerHTML = `
+                    <div class="w-24 h-24 rounded-2xl overflow-hidden shrink-0">
+                        <img src="${item.img}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-black text-lg tracking-tight">${item.name}</h3>
+                        <p class="text-orange-600 font-bold">₹${item.price}</p>
+                    </div>
+                    <div class="flex items-center gap-4 bg-gray-50 px-4 py-2 rounded-xl border border-gray-200">
+                        <button onclick="decreaseQty(${item.id})" class="text-gray-500 hover:text-red-600 transition-colors">
+                            <i data-lucide="minus" class="w-4 h-4"></i>
+                        </button>
+                        <span class="font-black text-base w-4 text-center">${item.qty}</span>
+                        <button onclick="increaseQty(${item.id})" class="text-gray-500 hover:text-green-600 transition-colors">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            updateSummary(subtotal);
+            lucide.createIcons();
+        }
+
+        function updateSummary(sub) {
+            const tax = Math.round(sub * 0.05);
+            const deliveryFee = 40;
+            const preDiscountTotal = sub > 0 ? sub + tax + deliveryFee : 0;
+            
+            // Random Discount between 5% and 20%
+            const discountPercent = Math.floor(Math.random() * (20 - 5 + 1)) + 5;
+            const discountAmount = sub > 0 ? Math.round(preDiscountTotal * (discountPercent / 100)) : 0;
+            
+            currentTotal = preDiscountTotal - discountAmount;
+            
+            // UI Update
+            document.getElementById('subtotal').innerText = `₹${sub}`;
+            document.getElementById('tax').innerText = `₹${tax}`;
+            
+            const discountRow = document.getElementById('discount-row');
+            const luckyBadge = document.getElementById('lucky-badge');
+            
+            if (discountAmount > 0) {
+                discountRow.classList.remove('hidden');
+                luckyBadge.classList.remove('hidden');
+                document.getElementById('discount-label').innerText = `Lucky Discount (${discountPercent}%)`;
+                document.getElementById('discount-amount').innerText = `-₹${discountAmount}`;
+            } else {
+                discountRow.classList.add('hidden');
+                luckyBadge.classList.add('hidden');
+            }
+
+            document.getElementById('final-total').innerText = `₹${currentTotal}`;
+            
+            localStorage.setItem('foodoOrderTotal', currentTotal);
+        }
+
+        function increaseQty(id) {
+            const item = cart.find(i => i.id === id);
+            cart.push({...item});
+            saveAndRefresh();
+        }
+
+        function decreaseQty(id) {
+            const index = cart.findIndex(i => i.id === id);
+            if (index > -1) {
+                cart.splice(index, 1);
+            }
+            saveAndRefresh();
+        }
+
+        function saveAndRefresh() {
+            localStorage.setItem('foodoCart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        function startPaymentFlow() {
+            const modal = document.getElementById('payment-modal');
+            const timerBar = document.getElementById('timer-bar');
+            const countdownText = document.getElementById('countdown-text');
+            const modalTotal = document.getElementById('modal-total');
+            
+            modalTotal.innerText = currentTotal;
+            modal.classList.remove('hidden');
+            timerBar.classList.add('timer-bar');
+            
+            let timeLeft = 10;
+            const interval = setInterval(() => {
+                timeLeft--;
+                countdownText.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    window.location.href = "payment.html";
+                }
+            }, 1000);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
